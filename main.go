@@ -1,31 +1,33 @@
 package main
 
 import (
-	"github.com/westlife0615/chak-server/controller"
-	"github.com/westlife0615/chak-server/service"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
+	"github.com/westlife0615/chak-server/routes"
 )
 
 func main() {
-	var loginService service.LoginService = service.StaticLoginService()
-	var jwtService service.JWTService = service.JWTAuthService()
-	var loginController controller.LoginController = controller.LoginHandler(loginService, jwtService)
+	//var loginService service.LoginService = service.StaticLoginService()
+	//var jwtService service.JWTService = service.JWTAuthService()
+	//var loginController controller.LoginController = controller.LoginHandler(loginService, jwtService)
 
-	server := gin.New()
+	//service.Connect()
 
-	server.POST("/login", func(ctx *gin.Context) {
-		token := loginController.Login(ctx)
-		if token != "" {
-			ctx.JSON(http.StatusOK, gin.H{
-				"token": token,
-			})
-		} else {
-			ctx.JSON(http.StatusUnauthorized, nil)
-		}
-	})
-	port := "8080"
-	server.Run(":" + port)
+	// 기본 gin 엔진
+	//server := gin.New()
+
+	//server.POST("/login", func(ctx *gin.Context) {
+	//	token := loginController.Login(ctx)
+	//	if token != "" {
+	//		ctx.JSON(http.StatusOK, gin.H{
+	//			"token": token,
+	//		})
+	//	} else {
+	//		ctx.JSON(http.StatusUnauthorized, nil)
+	//	}
+	//})
+	//port := "8080"
+	//server.Run(":" + port)
+
+	//service.Migrate()
+	routes.StartGin()
 
 }
