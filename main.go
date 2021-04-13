@@ -1,33 +1,21 @@
 package main
 
 import (
-	"github.com/westlife0615/chak-server/routes"
+	"github.com/gin-gonic/gin"
+	"github.com/westlife0615/chak-server/handler"
+	"github.com/westlife0615/chak-server/usecase"
+	"github.com/westlife0615/chak-server/repository"
 )
 
 func main() {
-	//var loginService service.LoginService = service.StaticLoginService()
-	//var jwtService service.JWTService = service.JWTAuthService()
-	//var loginController controller.LoginController = controller.LoginHandler(loginService, jwtService)
+	userRepository := repository.NewUserRepository()
+	userUsecase := usecase.NewUserUsecase(userRepository)
+	userHandler := handler.NewUserHandler(userUsecase)
 
-	//service.Connect()
-
-	// 기본 gin 엔진
-	//server := gin.New()
-
-	//server.POST("/login", func(ctx *gin.Context) {
-	//	token := loginController.Login(ctx)
-	//	if token != "" {
-	//		ctx.JSON(http.StatusOK, gin.H{
-	//			"token": token,
-	//		})
-	//	} else {
-	//		ctx.JSON(http.StatusUnauthorized, nil)
-	//	}
-	//})
-	//port := "8080"
-	//server.Run(":" + port)
-
-	//service.Migrate()
-	routes.StartGin()
-
+	r := gin.Default()
+	r.GET("/users", userHandler.GetAllUsers)
+	r.POST("/users", userHandler.CreateUser)
+	r.PATCH("/users/:id", userHandler.UpdateUser)
+	r.DELETE("/users/:id", userHandler.DeleteUser)
+	r.Run(":8080")
 }

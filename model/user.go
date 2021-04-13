@@ -1,19 +1,11 @@
 package model
 
-import "github.com/jinzhu/gorm"
+import "time"
 
 type User struct {
-	gorm.Model
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type LoginForm struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type RegisterForm struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Id        int `json:id gorm:"primary_key"`
+	Password  uint
+	Email     string    `json:email,omitempty`
+	CreatedAt time.Time `json:createdAt`
+	UpdatedAt time.Time `json:updatedAt`
 }
