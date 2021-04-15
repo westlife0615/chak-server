@@ -23,15 +23,15 @@ type exampleUserUsecase struct {
 	userRepository repository.UserRepository
 }
 
-func (s *exampleUserUsecase) CreateUser(todo model.User) error {
-	return s.userRepository.Create(todo)
+func (s *exampleUserUsecase) CreateUser(curUser model.User) error {
+	return s.userRepository.Create(curUser)
 }
 
-func (s *exampleUserUsecase) UpdateUser(todo model.User) error {
-	if todo.Id < 1 {
+func (s *exampleUserUsecase) UpdateUser(curUser model.User) error {
+	if curUser.Id < 1 {
 		return InvalidIdError
 	}
-	return s.userRepository.Update(todo)
+	return s.userRepository.Update(curUser)
 }
 
 func (s *exampleUserUsecase) DeleteUser(id int) error {

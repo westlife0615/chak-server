@@ -2,9 +2,8 @@ package repository
 
 import (
 	"errors"
-	"time"
+	"github.com/westlife0615/chak-server/config"
 	"github.com/westlife0615/chak-server/model"
-
 )
 
 type UserRepository interface {
@@ -15,16 +14,15 @@ type UserRepository interface {
 }
 
 type exampleUserRepository struct {
-	todos map[int]model.User
+	todos  map[int]model.User
 	nextId int
 }
 
-func (r *exampleUserRepository) Create(todo model.User) error {
-	nextId := r.nextId
-	todo.Id = nextId
-	r.todos[r.nextId] = todo
-	r.nextId = nextId + 1
+func (r *exampleUserRepository) Create(curUser model.User) error {
+	var user model.User = curUser
+	config.Database.Create(&user)
 	return nil
+
 }
 
 func (r *exampleUserRepository) Update(todo model.User) error {
@@ -47,19 +45,23 @@ func (r *exampleUserRepository) Delete(id int) error {
 }
 
 func (r *exampleUserRepository) GetAll() ([]model.User, error) {
-	arr := []model.User{}
-	for _, todo := range r.todos {
-		arr = append(arr, todo)
+	var users []model.User
+	if err := config.Database.Find(&users).Error; err != nil {
+		return users, err
 	}
-	return arr, nil
+	return users, nil
 }
 
+/*
+"" string
+'' rural
+*/
 func NewUserRepository() UserRepository {
 	return &exampleUserRepository{
-		todos: map[int]model.User{
-			1: model.User{1, "Content 1", time.Now(), time.Now()},
-			2: model.User{2, "Content 2", time.Now(), time.Now()},
-		},
-		nextId: 3,
+		//todos: map[int]model.User{
+		//	1: model.User{1, "123123", "bigin@bigin.io", time.Now(), time.Now()},
+		//	2: model.User{2, "123123", "westlife0615@bigin.io", time.Now(), time.Now()},
+		//},
+		//nextId: 3,
 	}
 }

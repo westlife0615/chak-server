@@ -18,7 +18,6 @@ func Connect() *gorm.DB {
 func Migrate() {
 	db := Connect()
 	db.AutoMigrate(&model.User{})
-
 }
 
 func seed(db *gorm.DB) {

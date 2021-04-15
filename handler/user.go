@@ -12,11 +12,12 @@ import (
 )
 
 type createUserInput struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type updateUserInput struct {
-	Id int `json:"id"`
+	Id    int    `json:"id"`
 	Email string `json:"email"`
 }
 
@@ -27,7 +28,7 @@ type UserHandler struct {
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var input createUserInput
 	c.Bind(&input)
-	user := model.User{Email: input.Email, CreatedAt: time.Now(), UpdatedAt: time.Now()}
+	user := model.User{Email: input.Email, Password : input.Password, CreatedAt: time.Now(), UpdatedAt: time.Now()}
 	err := h.tu.CreateUser(user)
 	if err != nil {
 		log.Printf("Error occured - %+v", err)
@@ -38,7 +39,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 func (h *UserHandler) UpdateUser(c *gin.Context) {
 	var input updateUserInput
-	c.Bind(&input)
+	c.BindJSON(&input)
 	user := model.User{Id: input.Id, Email: input.Email, UpdatedAt: time.Now()}
 	err := h.tu.UpdateUser(user)
 	if err != nil {
