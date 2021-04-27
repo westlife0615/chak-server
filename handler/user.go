@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -22,14 +23,20 @@ type updateUserInput struct {
 }
 
 type UserHandler struct {
-	tu usecase.UserUsecase
+	usecase usecase.UserUsecase
 }
 
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var input createUserInput
-	c.Bind(&input)
-	user := model.User{Email: input.Email, Password : input.Password, CreatedAt: time.Now(), UpdatedAt: time.Now()}
-	err := h.tu.CreateUser(user)
+	bindError := c.Bind(&input)
+	if bindError != nil {
+		log.Printf("Error occured - %+v", bindError)
+		c.Status(http.StatusInternalServerError)
+	}
+
+
+	user := model.User{Email: input.Email, Password: input.Password, CreatedAt: time.Now(), UpdatedAt: time.Now()}
+	err := h.usecase.CreateUser(user)
 	if err != nil {
 		log.Printf("Error occured - %+v", err)
 		c.Status(http.StatusInternalServerError)
@@ -39,14 +46,21 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 func (h *UserHandler) UpdateUser(c *gin.Context) {
 	var input updateUserInput
-	c.BindJSON(&input)
+	bindError := c.BindJSON(&input)
+	if bindError != nil {
+		log.Printf("error occured %v" , bindError)
+		c.Status(http.StatusInternalServerError)
+	}
+
+	fmt.Print(input)
 	user := model.User{Id: input.Id, Email: input.Email, UpdatedAt: time.Now()}
-	err := h.tu.UpdateUser(user)
+
+	err := h.usecase.UpdateUser(user)
 	if err != nil {
 		log.Printf("Error occured - %+v", err)
 		c.Status(http.StatusInternalServerError)
 	}
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, &user)
 }
 
 func (h *UserHandler) DeleteUser(c *gin.Context) {
@@ -56,7 +70,7 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 	}
 
-	if err := h.tu.DeleteUser(id); err != nil {
+	if err := h.usecase.DeleteUser(id); err != nil {
 		log.Printf("Error occured -  %+v", err)
 		c.Status(http.StatusInternalServerError)
 	}
@@ -64,7 +78,7 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 }
 
 func (h *UserHandler) GetAllUsers(c *gin.Context) {
-	users := h.tu.GetAllUsers()
+	users := h.usecase.GetAllUsers()
 	c.JSON(200, users)
 }
 

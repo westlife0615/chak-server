@@ -42,11 +42,11 @@ func (s *exampleUserUsecase) DeleteUser(id int) error {
 }
 
 func (s *exampleUserUsecase) GetAllUsers() []model.User {
-	todos, err := s.userRepository.GetAll()
+	users, err := s.userRepository.GetAll()
 	if err != nil {
 		return []model.User{}
 	}
-	return todos
+	return users
 }
 
 

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/westlife0615/chak-server/config"
 	"github.com/westlife0615/chak-server/model"
+	"time"
 )
 
 type UserRepository interface {
@@ -25,13 +26,22 @@ func (r *exampleUserRepository) Create(curUser model.User) error {
 
 }
 
-func (r *exampleUserRepository) Update(todo model.User) error {
-	id := todo.Id
-	_, ok := r.todos[id]
-	if !ok {
-		return errors.New("Has no item to update. Id - " + string(id))
+func (r *exampleUserRepository) Update(curUser model.User) error {
+	//1  find one
+	var foundUser model.User
+
+	if foundUserError := config.Database.First(&foundUser, curUser.Id).Error; foundUserError != nil {
+		return foundUserError
 	}
-	r.todos[id] = todo
+
+	// 2 update model
+	foundUser.Email = curUser.Email
+	foundUser.UpdatedAt = time.Now()
+
+	// 3 save
+	if saveUserError := config.Database.Save(&foundUser).Error; saveUserError != nil {
+		return saveUserError
+	}
 	return nil
 }
 
@@ -44,11 +54,16 @@ func (r *exampleUserRepository) Delete(id int) error {
 	return nil
 }
 
+// TODO : omit Password
 func (r *exampleUserRepository) GetAll() ([]model.User, error) {
 	var users []model.User
-	if err := config.Database.Find(&users).Error; err != nil {
+	//if err := config.Database.Find(&users).Error; err != nil {
+	//	return users, err
+	//}
+	if err := config.Database.Table("users").Select([]string{"id", "email"}).Find(&users).Error; err != nil {
 		return users, err
 	}
+
 	return users, nil
 }
 
