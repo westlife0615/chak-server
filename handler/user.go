@@ -20,6 +20,7 @@ type createUserInput struct {
 type updateUserInput struct {
 	Id    int    `json:"id"`
 	Email string `json:"email"`
+	Password string `json:"password"`
 }
 
 type UserHandler struct {
@@ -53,7 +54,7 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 	}
 
 	fmt.Print(input)
-	user := model.User{Id: input.Id, Email: input.Email, UpdatedAt: time.Now()}
+	user := model.User{Id: input.Id, Email: input.Email, Password: input.Password, UpdatedAt: time.Now()}
 
 	err := h.usecase.UpdateUser(user)
 	if err != nil {

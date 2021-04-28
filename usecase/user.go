@@ -5,7 +5,6 @@ import (
 	"github.com/westlife0615/chak-server/repository"
 
 	"github.com/westlife0615/chak-server/model"
-	//"github.com/shharn/golang-clean-architecture/repository"
 )
 
 var (
@@ -17,6 +16,7 @@ type UserUsecase interface {
 	UpdateUser(model.User) error
 	DeleteUser(int) error
 	GetAllUsers() []model.User
+	GetUser(string) model.User
 }
 
 type exampleUserUsecase struct {
@@ -28,9 +28,6 @@ func (s *exampleUserUsecase) CreateUser(curUser model.User) error {
 }
 
 func (s *exampleUserUsecase) UpdateUser(curUser model.User) error {
-	if curUser.Id < 1 {
-		return InvalidIdError
-	}
 	return s.userRepository.Update(curUser)
 }
 
@@ -47,6 +44,14 @@ func (s *exampleUserUsecase) GetAllUsers() []model.User {
 		return []model.User{}
 	}
 	return users
+}
+
+func (s *exampleUserUsecase) GetUser(email string) model.User {
+	user, err := s.userRepository.Get(email)
+	if err != nil {
+		return model.User{}
+	}
+	return user
 }
 
 

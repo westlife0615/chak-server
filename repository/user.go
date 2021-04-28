@@ -12,6 +12,7 @@ type UserRepository interface {
 	Update(model.User) error
 	Delete(int) error
 	GetAll() ([]model.User, error)
+	Get(string) (model.User, error)
 }
 
 type exampleUserRepository struct {
@@ -30,12 +31,13 @@ func (r *exampleUserRepository) Update(curUser model.User) error {
 	//1  find one
 	var foundUser model.User
 
-	if foundUserError := config.Database.First(&foundUser, curUser.Id).Error; foundUserError != nil {
+	if foundUserError := config.Database.Table("users").Where("email = ?", curUser.Email).First(&foundUser).Error; foundUserError != nil {
 		return foundUserError
 	}
 
 	// 2 update model
 	foundUser.Email = curUser.Email
+	foundUser.Password = curUser.Password
 	foundUser.UpdatedAt = time.Now()
 
 	// 3 save
@@ -65,6 +67,15 @@ func (r *exampleUserRepository) GetAll() ([]model.User, error) {
 	}
 
 	return users, nil
+}
+
+func (r *exampleUserRepository) Get(email string) (model.User, error) {
+	var user model.User
+	if err := config.Database.Table("users").Where("email = ?", email).First(&user).Error; err != nil {
+		return user, err
+	}
+
+	return user, nil
 }
 
 /*
